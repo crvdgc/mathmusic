@@ -56,3 +56,22 @@ def Pythagorean(A4=69, n_notes=127, pitch_A4=440.00):
         pitches[i] = pitches[C4 + (i-bias) % 12] * 2 ** ( (i-bias) // 12 - C4 // 12 )
 
     return pitches
+
+def Just_intonation(A4=69, n_notes=127, pitch_A4=440.00):
+    # 纯律
+    pitches = np.zeros(n_notes)
+    pitches[A4] = pitch_A4
+
+    octave = [1, 16/15, 9/8, 6/5, 5/4, 4/3, 7/5, 3/2, 8/5, 5/3, 7/4, 15/8]
+    octave = np.array(octave)
+
+    octave = octave * pitch_A4 / octave[9]
+
+    pitches[69-9:69-9+12] = octave
+
+    C4 = A4 - 9
+    bias = C4 % 12
+    for i in range(n_notes):
+        pitches[i] = pitches[C4 + (i-bias) % 12] * 2 ** ( (i-bias) // 12 - C4 // 12 )
+
+    return pitches
