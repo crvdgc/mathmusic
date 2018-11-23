@@ -2,9 +2,6 @@
 import numpy as np
 
 
-
-
-
 def twelve_tone_equal(A4=69, n_notes=127, pitch_A4=440.00):
     # 12-tone equal temporament
     # pitches[69] is the 69th note
@@ -26,3 +23,36 @@ def twelve_tone_equal(A4=69, n_notes=127, pitch_A4=440.00):
 
     return pitches
 
+def another_mod(n, m):
+    if n > 0:
+        return n%m
+    elif n == 0:
+        return 0
+    else:
+        return n%m - m
+
+def Pythagorean(A4=69, n_notes=127, pitch_A4=440.00):
+    # 五度相生律（双参数m,n）
+
+    pitches = np.zeros(n_notes)
+    pitches[A4] = pitch_A4
+
+    octave = np.zeros(12)
+    octave[0] = 1.0
+
+    for i in range(1, len(octave)):
+        octave[i] = octave[i-1] * 1.50
+        if octave[i] > 2.00:
+            octave[i] = octave[i] / 2.00
+
+    octave = np.sort(octave)
+    octave = octave * pitch_A4 / octave[9]
+
+    pitches[69-9:69-9+12] = octave
+
+    C4 = A4 - 9
+    bias = C4 % 12
+    for i in range(n_notes):
+        pitches[i] = pitches[C4 + (i-bias) % 12] * 2 ** ( (i-bias) // 12 - C4 // 12 )
+
+    return pitches

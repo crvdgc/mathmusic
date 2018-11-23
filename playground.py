@@ -7,7 +7,7 @@ import pandas as pd
 
 from spectrogram import draw_log_scale_spectrogram_12tone
 
-wavfile_name = 'wavfiles/scale.wav'
+wavfile_name = 'wavfiles/simple_song.wav'
 
 sample_rate, samples = wavfile.read(wavfile_name)
 
