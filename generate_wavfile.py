@@ -16,7 +16,7 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
     # the param vel is velocity, which means the amplitude of this wave
 
     # generate a slightly longer wave
-    sample_points = np.arange(0, end - start + 0.1 , 1/sample_rate)
+    sample_points = np.arange(0, end - start + 0.1, 1/sample_rate)
     wave = np.sin(freq * sample_points * 2 * np.pi) * vel
 
     samples = np.zeros(int(duration * sample_rate))
@@ -91,11 +91,33 @@ def mid_to_samples(mid, temperament, sample_rate):
     return samples
 
 
+# midfile_path = 'midfiles/mz_331_3_format0.mid'
+# mid = mido.MidiFile(midfile_path)
+# sample_rate = 44100
+# samples = mid_to_samples(mid, temperament.twelve_tone_equal, sample_rate)
+# wavfile.write('test_wavfiles/test2.wav', sample_rate, samples)
+
+# --- generate Mozarts's Piano Sonata No.11 3 for all temeraments, save them to
+# test_wavfiles ---
 midfile_path = 'midfiles/mz_331_3_format0.mid'
 mid = mido.MidiFile(midfile_path)
 sample_rate = 44100
-samples = mid_to_samples(mid, temperament.twelve_tone_equal, sample_rate)
-wavfile.write('wavfiles/test2.wav', sample_rate, samples)
+# temperaments = [temperament.Just_intonation, temperament.Pythagorean, temperament.twelve_tone_equal]
+temp = temperament.Just_intonation
+samples = mid_to_samples(mid, temp, sample_rate)
+wavfile.write('test_wavfiles/Just_Intonation/mzt_331_3.wav',
+              sample_rate, samples)
+
+temp = temperament.Pythagorean
+samples = mid_to_samples(mid, temp, sample_rate)
+wavfile.write('test_wavfiles/Pythagorean/mzt_331_3.wav',
+              sample_rate, samples)
+
+temp = temperament.twelve_tone_equal
+samples = mid_to_samples(mid, temp, sample_rate)
+wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_3.wav',
+              sample_rate, samples)
+
 
 # --- sample 440Hz ---
 
