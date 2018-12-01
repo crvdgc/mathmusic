@@ -150,7 +150,7 @@ def mid_to_samples(mid, temperament, sample_rate):
 
 
 
-def mid_to_samples_mut(mid, temperament, sample_rate):
+def mid_to_samples_mut(mid, temperament, sample_rate, ignore_vel=False):
     # use genwave_mut instead of genwave version of mid_to_samples
     pitches = temperament()
     # this duration reported by mid.length cannot be fully trusted, 
@@ -197,8 +197,12 @@ def mid_to_samples_mut(mid, temperament, sample_rate):
                 start, vel = note_on_dict.pop(msg.note)
                 end = current_time
                 # patch the wave
-                genwave_mut(wave_patch, 
-                    duration=total_duration, start=start, end=end, vel=vel, freq=pitches[msg.note])
+                if ignore_vel:
+                    genwave_mut(wave_patch, 
+                        duration=total_duration, start=start, end=end, vel=1, freq=pitches[msg.note])
+                else:
+                    genwave_mut(wave_patch, 
+                        duration=total_duration, start=start, end=end, vel=vel, freq=pitches[msg.note])
                 # add to original wave
                 samples = samples + wave_patch
             # if this is note a end of a note, i.e. this is a new note pushed, then we simply add
