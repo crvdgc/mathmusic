@@ -2,7 +2,7 @@ Hi,
 
     we put all our .wav files in this folder.
 
-    wav files starting with test will be ignored by git.
+    in developing we use wavfiles under test_wavfiles, it will be ignored by git
 
     it is actually very strange to include binaries like wav
     files in gvs (we should use glfs or whatever text based

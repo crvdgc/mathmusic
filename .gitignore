@@ -5,7 +5,7 @@ __pycache__/
 .DS_Store
 
 # testing wavfiles
-wavfiles/test*
+test_wavfiles/*
 
 # testing figs
 figs/test*

@@ -50,12 +50,10 @@ def mid_to_samples(mid, temperament, sample_rate):
         # so we also need to keep a dict that stores such information
         note_on_dict = dict()
 
-        j = 0
-        for msg in track:
-            if j > 1000:
-                break
+        for j, msg in enumerate(track):
+            # if j > 1000:
+            #     break
             print(j, msg, current_time)
-            j = j + 1
             # first, the time attr of each msg is the time since last msg,
             # so we need to accumulate this value (this is the absolute start time)
             # msg.time is in ticks, so we need to convert it to seconds
