@@ -22,7 +22,15 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
     samples = np.zeros(int(duration * sample_rate))
     # chuncate to fit length
     wave = wave[:int(end * sample_rate) - int(start * sample_rate)]
-    samples[int(start * sample_rate):int(end * sample_rate)] = wave
+    try:
+        samples[int(start * sample_rate):int(end * sample_rate)] = wave
+    except ValueError as e:
+        print("ValueError")
+        print(e.args)
+        print(duration, start, end, vel, freq, sample_rate)
+        print(wave)
+        print(samples)
+
 
     return samples
 
