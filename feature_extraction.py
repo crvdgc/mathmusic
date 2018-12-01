@@ -116,28 +116,18 @@ def features_seg_abs_fft_max(samples, sample_rate, **kwargs):
     # iterate over times to extract max
     for time_index, _ in enumerate(times):
         seg_spi = seg_spi + spectrogram[:, time_index]
-    peakind, _ = signal.find_peaks(seg_spi, prominence=0.5)
+    peakind, _ = signal.find_peaks(seg_spi, prominence=0.7)
     return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
 
-sample_rate, samples = wavfile.read('wavfiles/test2.wav.0.wav')
-# a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
-# a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
-a, b, c, d = features_seg_abs_fft_max(samples, sample_rate, nperseg=4096, nfft=32768)
 
-# print(a)
+temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
 
-plt.plot(a, b, 'x')
-plt.plot(c, d)
+for temp in temps:
+    sample_rate, samples = wavfile.read('wavfiles/'+temp+'/scale.wav')
+    # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
+    # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
+    a, b, c, d = features_seg_abs_fft_max(samples, sample_rate, nperseg=4096, nfft=32768)
+    plt.plot(a, b, 'x')
+    plt.plot(c, d)
+
 plt.show()
-
-# a = get_fft('wavfiles/scale_Pythagorean.wav')
-# b = get_fft('wavfiles/scale_Just_intonation.wav')
-# c = get_fft('wavfiles/scale_twelve_tone_equal.wav')
-# d = get_fft('wavfiles/sample_10s.wav')
-
-# plt.plot(freq, sp.real, freq, sp.imag)
-# plt.plot(freq, sp.real)
-
-# plt.plot(*d)
-
-# plt.show()

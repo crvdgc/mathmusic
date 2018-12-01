@@ -110,23 +110,23 @@ def mid_to_samples(mid, temperament, sample_rate):
 
 # --- generate Mozarts's Piano Sonata No.11 3 for all temeraments, save them to
 # test_wavfiles ---
-midfile_path = 'midfiles/mz_331_3_format0.mid'
+midfile_path = 'midfiles/mz_331_1_format0.mid'
 mid = mido.MidiFile(midfile_path)
 sample_rate = 44100
 # temperaments = [temperament.Just_intonation, temperament.Pythagorean, temperament.twelve_tone_equal]
 temp = temperament.Just_intonation
 samples = mid_to_samples(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Just_Intonation/mzt_331_3.wav',
+wavfile.write('test_wavfiles/Just_Intonation/mzt_331_1.wav',
               sample_rate, samples)
 
 temp = temperament.Pythagorean
 samples = mid_to_samples(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Pythagorean/mzt_331_3.wav',
+wavfile.write('test_wavfiles/Pythagorean/mzt_331_1.wav',
               sample_rate, samples)
 
 temp = temperament.twelve_tone_equal
 samples = mid_to_samples(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_3.wav',
+wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_1.wav',
               sample_rate, samples)
 
 

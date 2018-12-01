@@ -4,6 +4,10 @@ from scipy.io import wavfile
 def seperate_channels(samples):
     pass
 
+#@TODO
+def force_mono(samples):
+    # merge channels of a wav file
+    pass
 
 def slice_wavfile(wavfile_name, time_interval=30):
     sample_rate, samples = wavfile.read(wavfile_name)
