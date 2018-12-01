@@ -35,6 +35,35 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
     return samples
 
 
+def genwave_mut(samples, duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=44100):
+    # mutating function version of genwave, avoid too many mallocs by always using the 
+    # same array to store generated wave
+    # generate a segmented wave, like this  -----------/\/\/\/\/\/\----------
+    #                                       |<---------duration------------>|
+    #                                       |          ↑start     ↑end      |
+    # the param vel is velocity, which means the amplitude of this wave
+
+    # generate a slightly longer wave
+    sample_points = np.arange(0, end - start + 0.1, 1/sample_rate)
+    wave = np.sin(freq * sample_points * 2 * np.pi) * vel
+    # clear our wave
+    samples = 0 * samples
+    # truncate to fit length
+    wave = wave[:int(end * sample_rate) - int(start * sample_rate)]
+    try:
+        samples[int(start * sample_rate):int(end * sample_rate)] = wave
+    except ValueError as e:
+        print("ValueError")
+        print(e.args)
+        print(duration, start, end, vel, freq, sample_rate)
+        print(wave)
+        print(samples)
+
+    # we don't need to return it, but we still do this
+    return samples
+
+
+
 def mid_to_samples(mid, temperament, sample_rate):
     pitches = temperament()
     # this duration reported by mid.length cannot be fully trusted, 
@@ -102,6 +131,68 @@ def mid_to_samples(mid, temperament, sample_rate):
     return samples
 
 
+
+def mid_to_samples_mut(mid, temperament, sample_rate):
+    # use genwave_mut instead of genwave version of mid_to_samples
+    pitches = temperament()
+    # this duration reported by mid.length cannot be fully trusted, 
+    # test shows that this value can shift up to 0.2s for a simple 190s song
+    # so we multiply it by a factor of 1.001 to avoid truncating at end of song.
+    total_duration = mid.length * 1.001
+    samples = np.zeros(int(total_duration * sample_rate) + 1)
+    wave_patch = np.zeros(len(samples))
+
+    for i, track in enumerate(mid.tracks):
+        print('Track {}: {}'.format(i, track.name))
+        # we need to keep a reference of current time when iterating over msgs.
+        # unit: s
+        current_time = 0
+
+        # the default tempo is 500000 (ms / beat)
+        current_tempo = 500000
+
+        # there are 3 conditions when a note is ended:
+        # 1. we have recieved note_off event
+        # 2. we have recieved note_on event, but velocity is 0
+        # 3. a new note started, so this note must end
+        # when a note is ended, we must then look up the time and the velocity when
+        # it started.
+        # so we also need to keep a dict that stores such information
+        note_on_dict = dict()
+
+        for j, msg in enumerate(track):
+            # if j > 1000:
+            #     break
+            print(j, msg, current_time)
+            # first, the time attr of each msg is the time since last msg,
+            # so we need to accumulate this value (this is the absolute start time)
+            # msg.time is in ticks, so we need to convert it to seconds
+            if msg.type == 'set_tempo':
+                current_tempo = msg.tempo
+            time_delta = mido.tick2second(
+                msg.time, mid.ticks_per_beat, current_tempo)
+            current_time = current_time + time_delta
+
+            # then we check if this is the end of a note
+            if ((msg.type == 'note_off') or (msg.type == 'note_on' and (msg.velocity == 0 or msg.note in note_on_dict))) and msg.note in note_on_dict:
+                # ends
+                start, vel = note_on_dict.pop(msg.note)
+                end = current_time
+                # patch the wave
+                genwave_mut(wave_patch, 
+                    duration=total_duration, start=start, end=end, vel=vel, freq=pitches[msg.note])
+                # add to original wave
+                samples = samples + wave_patch
+            # if this is note a end of a note, i.e. this is a new note pushed, then we simply add
+            # it to our dict
+            elif (msg.type == 'note_on'):
+                note_on_dict[msg.note] = (current_time, msg.velocity)
+            # finally, if this message is irrelavent
+            else:
+                pass
+    return samples
+
+
 # midfile_path = 'midfiles/mz_331_3_format0.mid'
 # mid = mido.MidiFile(midfile_path)
 # sample_rate = 44100
@@ -115,17 +206,17 @@ mid = mido.MidiFile(midfile_path)
 sample_rate = 44100
 # temperaments = [temperament.Just_intonation, temperament.Pythagorean, temperament.twelve_tone_equal]
 temp = temperament.Just_intonation
-samples = mid_to_samples(mid, temp, sample_rate)
+samples = mid_to_samples_mut(mid, temp, sample_rate)
 wavfile.write('test_wavfiles/Just_Intonation/mzt_331_1.wav',
               sample_rate, samples)
 
 temp = temperament.Pythagorean
-samples = mid_to_samples(mid, temp, sample_rate)
+samples = mid_to_samples_mut(mid, temp, sample_rate)
 wavfile.write('test_wavfiles/Pythagorean/mzt_331_1.wav',
               sample_rate, samples)
 
 temp = temperament.twelve_tone_equal
-samples = mid_to_samples(mid, temp, sample_rate)
+samples = mid_to_samples_mut(mid, temp, sample_rate)
 wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_1.wav',
               sample_rate, samples)
 

@@ -19,4 +19,7 @@ def slice_wavfile(wavfile_name, time_interval=30):
             samples_slice = samples[i*sample_rate:]
         wavfile.write(wavfile_name + '.' + str(i) + '.wav', sample_rate, samples_slice)
 
-slice_wavfile('wavfiles/test2.wav')
+temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
+
+for temp in temps:
+    slice_wavfile('test_wavfiles/'+temp+'/mzt_331_3.wav')

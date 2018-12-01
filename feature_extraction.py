@@ -120,14 +120,14 @@ def features_seg_abs_fft_max(samples, sample_rate, **kwargs):
     return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
 
 
-temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
+# temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
 
-for temp in temps:
-    sample_rate, samples = wavfile.read('wavfiles/'+temp+'/scale.wav')
-    # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
-    # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
-    a, b, c, d = features_seg_abs_fft_max(samples, sample_rate, nperseg=4096, nfft=32768)
-    plt.plot(a, b, 'x')
-    plt.plot(c, d)
+# for temp in temps:
+#     sample_rate, samples = wavfile.read('test_wavfiles/'+temp+'/mzt_331_3.wav.30.wav')
+#     # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
+#     # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
+#     a, b, c, d = features_seg_abs_fft_max(samples, sample_rate, nperseg=4096, nfft=32768)
+#     plt.plot(a, b, 'x')
+#     plt.plot(c, d)
 
-plt.show()
+# plt.show()
