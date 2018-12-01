@@ -8,23 +8,29 @@ import sys
 
 from spectrogram import draw_log_scale_spectrogram_12tone
 
-# params: nperseg nfft noverlap
+# params: nperseg nfft noverlap filename
 nperseg = int(sys.argv[1])
 nfft = int(sys.argv[2])
 noverlap = int(sys.argv[3])
 
-wavfile_name = 'wavfiles/scale.wav'
+wavfile_name = sys.argv[4]
+
+
+def escape_for_filename(filename):
+    return filename.replace('/', '_').replace('.', '_')
+
 
 sample_rate, samples = wavfile.read(wavfile_name)
 
 
-print('Drawing for {filename} with params: nperseg={nperseg}, nfft={nfft}, noverlap={noverlap}'.format(filename=wavfile_name, nperseg=nperseg, nfft=nfft, noverlap=noverlap))
+print('Drawing for {filename} with params: nperseg={nperseg}, nfft={nfft}, noverlap={noverlap}'.format(
+    filename=wavfile_name, nperseg=nperseg, nfft=nfft, noverlap=noverlap))
 
 start_time = datetime.now()
 
 try:
     draw_log_scale_spectrogram_12tone(samples, sample_rate, nperseg=nperseg, nfft=nfft,
-                noverlap=noverlap, vmax=None, dpi=300, cmap='nipy_spectral', filename='sample_10s')
+                                      noverlap=noverlap, vmax=None, dpi=300, cmap='nipy_spectral', filename=escape_for_filename(wavfile_name))
 except TimeoutError as e:
     print("Timed out!")
 except KeyboardInterrupt as e:
