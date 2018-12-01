@@ -117,7 +117,8 @@ def features_seg_abs_fft_max(samples, sample_rate, **kwargs):
     for time_index, _ in enumerate(times):
         seg_spi = seg_spi + spectrogram[:, time_index]
     peakind, _ = signal.find_peaks(seg_spi, prominence=0.7)
-    return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
+    # return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
+    return frequencies[peakind]
 
 
 # temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']

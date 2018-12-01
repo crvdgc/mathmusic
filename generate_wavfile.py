@@ -35,6 +35,24 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
     return samples
 
 
+# hz_freqs = dict()
+# for freq in range(2000):
+#     hz_freqs[freq] = genwave(freq=freq)
+
+# def writeHz(freqs):
+#     res = np.zeros(len(hz_freqs[0]))
+#     for i in freqs:
+#         res = res + hz_freqs[i]
+#     wavfile.write('+'.join(map(str, freqs)) + '.wav', 44100, res)
+#     return res
+
+# def writeHzVel(freqs, vels):
+#     res = np.zeros(len(hz_freqs[0]))
+#     for i in range(len(freqs)):
+#         res = res + hz_freqs[freqs[i]] * vels[i]
+#     wavfile.write('+'.join(map(str, freqs)) + '.wav', 44100, res)
+#     return res
+
 def genwave_mut(samples, duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=44100):
     # mutating function version of genwave, avoid too many mallocs by always using the 
     # same array to store generated wave
@@ -201,23 +219,23 @@ def mid_to_samples_mut(mid, temperament, sample_rate):
 
 # --- generate Mozarts's Piano Sonata No.11 3 for all temeraments, save them to
 # test_wavfiles ---
-midfile_path = 'midfiles/mz_331_1_format0.mid'
+midfile_path = 'midfiles/mz_331_2_format0.mid'
 mid = mido.MidiFile(midfile_path)
 sample_rate = 44100
 # temperaments = [temperament.Just_intonation, temperament.Pythagorean, temperament.twelve_tone_equal]
 temp = temperament.Just_intonation
 samples = mid_to_samples_mut(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Just_Intonation/mzt_331_1.wav',
+wavfile.write('test_wavfiles/Just_Intonation/mzt_331_2.wav',
               sample_rate, samples)
 
 temp = temperament.Pythagorean
 samples = mid_to_samples_mut(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Pythagorean/mzt_331_1.wav',
+wavfile.write('test_wavfiles/Pythagorean/mzt_331_2.wav',
               sample_rate, samples)
 
 temp = temperament.twelve_tone_equal
 samples = mid_to_samples_mut(mid, temp, sample_rate)
-wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_1.wav',
+wavfile.write('test_wavfiles/Twelve_Tone_Equal/mzt_331_2.wav',
               sample_rate, samples)
 
 
