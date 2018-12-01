@@ -20,7 +20,7 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
     wave = np.sin(freq * sample_points * 2 * np.pi) * vel
 
     samples = np.zeros(int(duration * sample_rate))
-    # chuncate to fit length
+    # truncate to fit length
     wave = wave[:int(end * sample_rate) - int(start * sample_rate)]
     try:
         samples[int(start * sample_rate):int(end * sample_rate)] = wave
@@ -37,7 +37,10 @@ def genwave(duration=1.0, start=0.0, end=1.0, vel=1.0, freq=440.00, sample_rate=
 
 def mid_to_samples(mid, temperament, sample_rate):
     pitches = temperament()
-    total_duration = mid.length
+    # this duration reported by mid.length cannot be fully trusted, 
+    # test shows that this value can shift up to 0.2s for a simple 190s song
+    # so we multiply it by a factor of 1.001 to avoid truncating at end of song.
+    total_duration = mid.length * 1.001
     samples = np.zeros(int(total_duration * sample_rate) + 1)
 
     for i, track in enumerate(mid.tracks):
@@ -79,7 +82,7 @@ def mid_to_samples(mid, temperament, sample_rate):
                 # patch the wave
                 wave_patch = genwave(
                     duration=total_duration, start=start, end=end, vel=vel, freq=pitches[msg.note])
-                # rightpad or chuncate generated wave so that we can safely add
+                # rightpad or truncate generated wave so that we can safely add
                 if len(wave_patch) > len(samples):
                     wave_patch = wave_patch[:len(samples)]
                 elif len(wave_patch) < len(samples):
