@@ -10,3 +10,5 @@ test_wavfiles/*
 # testing figs
 figs/test*
 
+# vscode
+.vscode
