@@ -134,6 +134,12 @@ def features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, **kwargs):
     return np.array([features[i]/features[i-1] for i in range(1, len(features))])
 
 
+def features_seg_abs_fft_max_trunc_ratio_prob(samples, sample_rate, **kwargs):
+    features, intensities, _, _ = features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs)
+    res = list(zip(features, intensities))
+    res.sort(key=lambda x: x[0])
+    return np.array([[res[i][0]/res[i-1][0], res[i][1]] for i in range(1, len(res))])
+
 # temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
 
 # for temp in temps:
