@@ -116,19 +116,35 @@ def features_seg_abs_fft_max(samples, sample_rate, **kwargs):
     # iterate over times to extract max
     for time_index, _ in enumerate(times):
         seg_spi = seg_spi + spectrogram[:, time_index]
-    peakind, _ = signal.find_peaks(seg_spi, prominence=0.7)
-    # return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
-    return frequencies[peakind]
+    peakind, _ = signal.find_peaks(seg_spi, prominence=0.2)
+    return frequencies[peakind], seg_spi[peakind], frequencies, seg_spi
+    # return frequencies[peakind]
 
 
-# temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
+def features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs):
+    first_n = 50
+    freqs, intensities, a, b = features_seg_abs_fft_max(samples, sample_rate, **kwargs)
+    first_inds = np.argsort(intensities)[len(intensities)-first_n:]
+    return freqs[first_inds], intensities[first_inds], a, b
 
-# for temp in temps:
-#     sample_rate, samples = wavfile.read('test_wavfiles/'+temp+'/mzt_331_3.wav.30.wav')
-#     # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
-#     # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
-#     a, b, c, d = features_seg_abs_fft_max(samples, sample_rate, nperseg=4096, nfft=32768)
-#     plt.plot(a, b, 'x')
-#     plt.plot(c, d)
 
-# plt.show()
+def features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, **kwargs):
+    features, _, _, _ = features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs)
+    features.sort()
+    return np.array([features[i]/features[i-1] for i in range(1, len(features))])
+
+
+temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
+
+for temp in temps:
+    sample_rate, samples = wavfile.read('wavfiles/'+temp+'/mzt_331_3.wav.60.wav')
+    # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
+    # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
+    a, b, c, d = features_seg_abs_fft_max_trunc(samples, sample_rate, nperseg=4096, nfft=32768)
+    plt.plot(a, b, 'x')
+    plt.plot(c, d)
+
+e = features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, nperseg=4096, nfft=32768)
+print(e)
+
+plt.show()
