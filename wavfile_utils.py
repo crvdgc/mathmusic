@@ -22,4 +22,4 @@ def slice_wavfile(wavfile_name, time_interval=30):
 temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
 
 for temp in temps:
-    slice_wavfile('test_wavfiles/'+temp+'/mzt_331_1.wav')
+    slice_wavfile('test_wavfiles/'+temp+'/mzt_331_3.wav')

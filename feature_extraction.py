@@ -121,28 +121,50 @@ def features_seg_abs_fft_max(samples, sample_rate, **kwargs):
     # return frequencies[peakind]
 
 
-def features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs):
-    first_n = 50
+def features_seg_abs_fft_max_trunc(samples, sample_rate, first_n=12, **kwargs):
     freqs, intensities, a, b = features_seg_abs_fft_max(samples, sample_rate, **kwargs)
     first_inds = np.argsort(intensities)[len(intensities)-first_n:]
     return freqs[first_inds], intensities[first_inds], a, b
 
 
-def features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, **kwargs):
-    features, _, _, _ = features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs)
-    features.sort()
-    return np.array([features[i]/features[i-1] for i in range(1, len(features))])
+# def features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, **kwargs):
+#     features, _, _, _ = features_seg_abs_fft_max_trunc(samples, sample_rate, **kwargs)
+#     features.sort()
+#     return np.array([features[i]/features[i-1] for i in range(1, len(features))])
+
+def features_octave_merge(samples, sample_rate, first_n=12, **kwargs):
+    # we merge all octaves into one
+    features, _, _, _ = features_seg_abs_fft_max_trunc(samples, sample_rate, first_n=first_n, **kwargs)
+    # merge all to 220 ~ 440
+    while True:
+        done = True
+        for i, freq in enumerate(features):
+            if freq > 440:
+                features[i] = freq / 2
+                done = False
+            if freq < 220:
+                features[i] = freq * 2
+                done = False
+        if done:
+            break
+    return features
+
+
 
 
 # temps = ['Just_Intonation', 'Pythagorean', 'Twelve_Tone_Equal']
+
+
+# def freq_to_note(frequencies):
+#     return np.log2(frequencies/440) * 12 + 69
 
 # for temp in temps:
 #     sample_rate, samples = wavfile.read('wavfiles/'+temp+'/mzt_331_3.wav.30.wav')
 #     # a,b,c,d = features_abs_fft_max(samples, sample_rate, prominence=0.3 )
 #     # a, b, c, d = features_abs_fft_cwt(samples, sample_rate, min_snr=5)
 #     a, b, c, d = features_seg_abs_fft_max_trunc(samples, sample_rate, nperseg=4096, nfft=32768)
-#     plt.plot(a, b, 'x')
-#     plt.plot(c, d)
+#     plt.plot(freq_to_note(a), b, 'x')
+#     plt.plot(freq_to_note(c), d)
 
 # e = features_seg_abs_fft_max_trunc_ratio(samples, sample_rate, nperseg=4096, nfft=32768)
 # print(e)
